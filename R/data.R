@@ -1,0 +1,23 @@
+#' Example Quandoo Restaurant Reviews Dataset
+#'
+#' A dataset containing restaurant reviews from Yen's Sushi & Asian Cuisine in Zurich, enhanced with demographic
+#' and linguistic annotations. This dataset is an exemplar for the functionalities
+#' provided by the QuandooScraper function
+#'
+#' @format A data frame with 1444 rows and 8 variables:
+#' \describe{
+#'   \item{name}{Name of the reviewer.}
+#'   \item{review_count}{Total number of reviews submitted by the reviewer.}
+#'   \item{date}{The date when the review was posted.}
+#'   \item{sex}{The estimated gender of the reviewer.}
+#'   \item{prob_male}{Probability that the reviewer is male, as estimated by a predictive model.}
+#'   \item{rating}{Rating given by the reviewer on a scale from 1 to 6.}
+#'   \item{description}{Text content of the review.}
+#'   \item{description_lang}{Detected language of the review's description.}
+#' }
+#'
+#' @source Yen's Sushi & Asian Cuisine: https://www.quandoo.ch/en/place/yens-restaurant-11833 (01.04.2024)
+#'
+#' @examples
+#' data(review_example)  # Lazy loading. Data becomes visible as soon as it's needed.
+"review_example"
