@@ -4,7 +4,7 @@
 #' It retrieves user-generated content and enriches this data with valuable information such as calculated review dates,
 #' estimated gender of the reviewers, and detected review languages. Gender estimation is performed using the `gender::gender()`
 #' function. Language detection is accomplished with `cld2::detect_language()`.
-#' Load the sample dataset with 1444 reviews for a restaurant in zurich:`load(review_example)` (?review_example)
+#' Load the sample dataset with 1444 reviews for a restaurant in zurich:`data(review_example)` (?review_example)
 #'
 #'
 #'
@@ -138,7 +138,7 @@ QuandooScraping <- function(url="https://www.quandoo.ch/en/place/restaurant-spor
     all_persons <- gsub("a week ago", "1 week ago", all_persons)
 
 
-    split_parts <- strsplit(all_persons, " \u00B7 ")
+    split_parts <- strsplit(all_persons, "\u00B7")
 
     # Definition des Suchmusters
     pattern <- "\\d+\\s+(hour|hours|week|weeks|day|days|month|months|year|years) ago\\b"

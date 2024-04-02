@@ -20,7 +20,7 @@ This function is designed for scraping restaurant reviews from Quandoo and augme
 It retrieves user-generated content and enriches this data with valuable information such as calculated review dates,
 estimated gender of the reviewers, and detected review languages. Gender estimation is performed using the \code{gender::gender()}
 function. Language detection is accomplished with \code{cld2::detect_language()}.
-Load the sample dataset with 1444 reviews for a restaurant in zurich:\code{load(review_example)} (?review_example)
+Load the sample dataset with 1444 reviews for a restaurant in zurich:\code{data(review_example)} (?review_example)
 }
 \examples{
 review_df <- QuandooScraping()

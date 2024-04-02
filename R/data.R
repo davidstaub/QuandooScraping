@@ -4,7 +4,7 @@
 #' and linguistic annotations. This dataset is an exemplar for the functionalities
 #' provided by the QuandooScraper function
 #'
-#' @format A data frame with 1444 rows and 8 variables:
+#' @format A data frame with 1445 rows and 8 variables:
 #' \describe{
 #'   \item{name}{Name of the reviewer.}
 #'   \item{review_count}{Total number of reviews submitted by the reviewer.}
@@ -16,7 +16,7 @@
 #'   \item{description_lang}{Detected language of the review's description.}
 #' }
 #'
-#' @source Yen's Sushi & Asian Cuisine: https://www.quandoo.ch/en/place/yens-restaurant-11833 (01.04.2024)
+#' @source Yen's Sushi & Asian Cuisine: https://www.quandoo.ch/en/place/yens-restaurant-11833 (02.04.2024)
 #'
 #' @examples
 #' data(review_example)  # Lazy loading. Data becomes visible as soon as it's needed.

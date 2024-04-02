@@ -5,7 +5,7 @@
 \alias{review_example}
 \title{Example Quandoo Restaurant Reviews Dataset}
 \format{
-A data frame with 1444 rows and 8 variables:
+A data frame with 1445 rows and 8 variables:
 \describe{
 \item{name}{Name of the reviewer.}
 \item{review_count}{Total number of reviews submitted by the reviewer.}
@@ -18,7 +18,7 @@ A data frame with 1444 rows and 8 variables:
 }
 }
 \source{
-Yen's Sushi & Asian Cuisine: https://www.quandoo.ch/en/place/yens-restaurant-11833 (01.04.2024)
+Yen's Sushi & Asian Cuisine: https://www.quandoo.ch/en/place/yens-restaurant-11833 (02.04.2024)
 }
 \usage{
 review_example
