@@ -4,7 +4,7 @@
 #' It retrieves user-generated content and enriches this data with valuable information such as calculated review dates,
 #' estimated gender of the reviewers, and detected review languages. Gender estimation is performed using the `gender::gender()`
 #' function. Language detection is accomplished with `cld2::detect_language()`.
-#' Load the example dataset with 1444 reviews for a restaurant in zurich:`load(review_example)` (?review_example)
+#' Load the sample dataset with 1444 reviews for a restaurant in zurich:`load(review_example)` (?review_example)
 #'
 #'
 #'
@@ -20,11 +20,19 @@
 QuandooScraping <- function(url="https://www.quandoo.ch/en/place/restaurant-sporrer-61089"){
 
 
+  if(requireNamespace("genderdata", quietly = TRUE)) {
+    genderdata_installed <- TRUE
+  } else {
+    genderdata_installed <- FALSE
+    cat("Install genderdata from github to predict gender: devtools::install_github(\"lmullen/genderdata\")")
+  }
+
+
   url = sub("(?:/speisekarte|/bilder|/bewertungen|#content).*", "", url)
   url = sub("(?:/ruokalista|/kuvat|/arvostelut|#content).*", "", url) # finisch
   url = sub("(?:/menu|/immagini|/recensioni|#content).*", "", url) # italienisch
   url = sub("(?:/menu|/photos|/reviews|#content).*", "", url) # englisch
-  url = sub("(?:/menu|/gorseller|/degerlendirme|#content).*", "", url) # türkisch
+  url = sub("(?:/menu|/gorseller|/degerlendirme|#content).*", "", url) # tuerkisch
   url = sub("(?:/speisekarte|/bilder|/bewertungen|#content).*", "", url)
 
   # Testen ob quandoo element von url
@@ -35,7 +43,7 @@ QuandooScraping <- function(url="https://www.quandoo.ch/en/place/restaurant-spor
     return(NULL)
   }
 
-  # Ergänzen falls vergessen
+  # Ergaenzen falls vergessen
   if(startsWith(url,"www.")){
     url <- paste0("https://", url)
     cat("url was completed with https://")
@@ -66,20 +74,20 @@ QuandooScraping <- function(url="https://www.quandoo.ch/en/place/restaurant-spor
   all_ratings <- list()
   all_persons <- list()
 
-  # Anfangswert für die Seitenzahl setzen
+  # Anfangswert fuer die Seitenzahl setzen
   page_number <- 1
 
-  # Variable, um zu überprüfen, ob es noch Seiten gibt
+  # Variable, um zu ueberpruefen, ob es noch Seiten gibt
   has_more_pages <- TRUE
 
   while(has_more_pages) {
-    # Erzeugen der spezifischen URL für die aktuelle Seite
+    # Erzeugen der spezifischen URL fuer die aktuelle Seite
     page_url <- paste0(url, "/bewertungen?reviewPage=", page_number,"#content")
 
     # Versuch, die Webseite zu lesen
     webpage <- rvest::read_html(page_url,silent=TRUE)
 
-    # Alle Review-Container auswählen
+    # Alle Review-Container auswaehlen
     review_containers <- rvest::html_nodes(webpage, '[data-name="shared-review"]')
 
 
@@ -96,7 +104,7 @@ QuandooScraping <- function(url="https://www.quandoo.ch/en/place/restaurant-spor
 
 
 
-    # Hinzufügen der extrahierten Reviews zur Gesamtliste, wenn es Reviews auf der Seite gibt
+    # Hinzufuegen der extrahierten Reviews zur Gesamtliste, wenn es Reviews auf der Seite gibt
     if(length(review_descriptions) > 0) {
       all_descriptions[[page_number]] <- review_descriptions
       all_persons[[page_number]] <- review_person
@@ -129,8 +137,8 @@ QuandooScraping <- function(url="https://www.quandoo.ch/en/place/restaurant-spor
     all_persons <- gsub("an hour ago", "1 hour ago", all_persons)
     all_persons <- gsub("a week ago", "1 week ago", all_persons)
 
-    # Aufteilung des Strings bei " · "
-    split_parts <- strsplit(all_persons, " · ")
+
+    split_parts <- strsplit(all_persons, " \u00B7 ")
 
     # Definition des Suchmusters
     pattern <- "\\d+\\s+(hour|hours|week|weeks|day|days|month|months|year|years) ago\\b"
@@ -170,17 +178,24 @@ QuandooScraping <- function(url="https://www.quandoo.ch/en/place/restaurant-spor
     # Formatierung des Datums, um nur Monat und Jahr anzuzeigen
     formatiertes_datum <- format(datum_vor_n, "%m/%Y")
 
-
     name <- stringr::str_replace_all(split_parts[[1]][1], pattern, "")
-    sex_object <-  gender::gender(trimws(gsub("[a-zA-Z]\\.", "", tolower(name))))
-    sex <- sex_object$gender
-    if (length(sex) == 0 && is.logical(sex)){
+
+    if(genderdata_installed){
+      name <- stringr::str_replace_all(split_parts[[1]][1], pattern, "")
+      sex_object <-  gender::gender(trimws(gsub("[a-zA-Z]\\.", "", tolower(name))))
+      sex <- sex_object$gender
+      if (length(sex) == 0 && is.logical(sex)){
+        sex <- NA
+        prob_male <- NA
+      } else {
+        sex = sex
+        prob_male <- sex_object$proportion_male
+      }
+    }else{
       sex <- NA
       prob_male <- NA
-    } else {
-      sex = sex
-      prob_male <- sex_object$proportion_male
     }
+
 
 
 
@@ -188,7 +203,8 @@ QuandooScraping <- function(url="https://www.quandoo.ch/en/place/restaurant-spor
     # Extraktion der Bewertungsanzahl
     review_count <- as.numeric(gsub("[^0-9]", "", split_parts[[1]][2]))
 
-    # Rückgabe als Liste
+
+    # Rueckgabe als Liste
     return(list(name = name,date = formatiertes_datum,  review_count = review_count,sex=sex,prob_male=prob_male))
   }
 
@@ -217,7 +233,7 @@ QuandooScraping <- function(url="https://www.quandoo.ch/en/place/restaurant-spor
 
   description_language <- lapply(processed_description,cld2::detect_language)
 
-  #### Df für Rückgabe zusammensetzen ####
+  #### Df fuer Rueckgabe zusammensetzen ####
 
   df_rating_description <- data.frame(rating = unlist(processed_rating),
                                       description = unlist(processed_description),
@@ -237,4 +253,5 @@ QuandooScraping <- function(url="https://www.quandoo.ch/en/place/restaurant-spor
 
   return(df)
 }
+
 
